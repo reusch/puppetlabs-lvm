@@ -157,7 +157,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   end
 
   def exists?
-    lvs(@resource[:volume_group]) =~ %r{#{@resource[:name]}}
+    # output is "VG #PV #LV #SN Attr VSize VFree", so we expect name as first non-space param.
+    lvs(@resource[:volume_group]) =~ %r{^\s*#{@resource[:name]}\s+}
   rescue Puppet::ExecutionFailure
     # lvs fails if we give it an empty volume group name, as would
     # happen if we were running `puppet resource`. This should be
